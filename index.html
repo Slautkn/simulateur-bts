@@ -111,6 +111,20 @@
             border: 1px solid #ddd;
             border-radius: 4px;
         }
+        .image-controls {
+            margin: 10px 0;
+            padding: 10px;
+            background-color: #f2f2f2;
+            border-radius: 4px;
+        }
+        .image-controls label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        .image-controls input {
+            width: 100%;
+            margin-bottom: 10px;
+        }
         @media (max-width: 900px) {
             .content {
                 flex-direction: column;
@@ -168,6 +182,13 @@
             
             <div class="image-container">
                 <img src="moyenne.PNG" alt="Image des moyennes" id="average-image">
+                <div class="image-controls">
+                    <label for="image-width">Largeur de l'image (%)</label>
+                    <input type="range" id="image-width" min="50" max="150" value="100" oninput="resizeImage()">
+                    <span id="width-value">100%</span>
+                    
+                    <button class="reset-button" onclick="resetImageSize()">Taille d'origine</button>
+                </div>
                 <p>Image: moyenne.PNG</p>
             </div>
         </div>
@@ -302,6 +323,28 @@
             // Réinitialiser le résultat
             const resultElement = document.getElementById("result");
             resultElement.textContent = "La moyenne s'affichera ici";
+        }
+
+        // Fonction pour redimensionner l'image
+        function resizeImage() {
+            const imageWidthSlider = document.getElementById("image-width");
+            const widthValue = document.getElementById("width-value");
+            const image = document.getElementById("average-image");
+            
+            const newWidth = imageWidthSlider.value;
+            image.style.width = newWidth + "%";
+            widthValue.textContent = newWidth + "%";
+        }
+        
+        // Fonction pour réinitialiser la taille de l'image
+        function resetImageSize() {
+            const imageWidthSlider = document.getElementById("image-width");
+            const widthValue = document.getElementById("width-value");
+            const image = document.getElementById("average-image");
+            
+            imageWidthSlider.value = 100;
+            image.style.width = "100%";
+            widthValue.textContent = "100%";
         }
 
         // Initialiser le tableau au chargement de la page
