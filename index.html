@@ -28,21 +28,23 @@
         }
         .content {
             display: flex;
-            flex-wrap: wrap;
+            flex-direction: column;
             padding: 20px;
         }
         .simulator {
-            flex: 1;
-            min-width: 600px;
+            width: 100%;
             padding: 20px;
             background-color: white;
             border-radius: 8px;
             box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            margin-right: 20px;
+            margin-bottom: 20px;
         }
         .image-container {
-            flex: 0 0 300px;
+            width: 100%;
             padding: 10px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         }
         table {
             width: 100%;
@@ -106,42 +108,20 @@
             font-size: 12px;
         }
         img {
-            max-width: none; /* Permet à l'image de dépasser 100% */
+            display: block;
+            max-width: 90%;
             height: auto;
             border: 1px solid #ddd;
             border-radius: 4px;
-            transition: width 0.3s ease; /* Animation douce de redimensionnement */
-        }
-        .image-container {
-            flex: 0 0 300px;
-            padding: 10px;
-            overflow: auto; /* Permet de scroller si l'image est trop grande */
-        }
-        .image-controls {
-            margin: 10px 0;
-            padding: 10px;
-            background-color: #f2f2f2;
-            border-radius: 4px;
-        }
-        .image-controls label {
-            display: block;
-            margin-bottom: 5px;
-        }
-        .image-controls input {
-            width: 100%;
-            margin-bottom: 10px;
+            margin: 0 auto;
         }
         @media (max-width: 900px) {
             .content {
-                flex-direction: column;
+                padding: 10px;
             }
-            .simulator {
-                margin-right: 0;
-                margin-bottom: 20px;
-                min-width: 100%;
-            }
+            .simulator, 
             .image-container {
-                flex: 1;
+                padding: 15px;
             }
         }
     </style>
@@ -187,15 +167,9 @@
             </div>
             
             <div class="image-container">
-                <img src="moyenne.PNG" alt="Image des moyennes" id="average-image" style="width: 120%;">
-                <div class="image-controls">
-                    <label for="image-width">Largeur de l'image (%)</label>
-                    <input type="range" id="image-width" min="100" max="200" value="120" oninput="resizeImage()">
-                    <span id="width-value">120%</span>
-                    
-                    <button class="reset-button" onclick="resetImageSize()">Taille d'origine</button>
-                </div>
-                <p>Image: moyenne.PNG</p>
+                <h3>Visualisation de l'image moyenne.PNG</h3>
+                <img src="moyenne.PNG" alt="Image des moyennes" id="average-image">
+                <p style="text-align: center; margin-top: 10px;">Image: moyenne.PNG</p>
             </div>
         </div>
     </div>
@@ -331,35 +305,8 @@
             resultElement.textContent = "La moyenne s'affichera ici";
         }
 
-        // Fonction pour redimensionner l'image
-        function resizeImage() {
-            const imageWidthSlider = document.getElementById("image-width");
-            const widthValue = document.getElementById("width-value");
-            const image = document.getElementById("average-image");
-            
-            const newWidth = imageWidthSlider.value;
-            image.style.width = newWidth + "%";
-            widthValue.textContent = newWidth + "%";
-        }
-        
-        // Fonction pour réinitialiser la taille de l'image
-        function resetImageSize() {
-            const imageWidthSlider = document.getElementById("image-width");
-            const widthValue = document.getElementById("width-value");
-            const image = document.getElementById("average-image");
-            
-            imageWidthSlider.value = 120;
-            image.style.width = "120%";
-            widthValue.textContent = "120%";
-        }
-
-        // Initialiser le tableau et l'image au chargement de la page
-        window.onload = function() {
-            initTable();
-            // S'assurer que l'image est bien zoomée dès le départ
-            const image = document.getElementById("average-image");
-            image.style.width = "120%";
-        };
+        // Initialiser le tableau au chargement de la page
+        window.onload = initTable;
     </script>
 </body>
 </html>
