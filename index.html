@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulateur de Moyenne - BTS CIEL Option B</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #f0f0f0;
+        }
+        .container {
+            display: flex;
+            flex-direction: column;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        header {
+            background-color: #3a7ca5;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        .content {
+            display: flex;
+            flex-wrap: wrap;
+            padding: 20px;
+        }
+        .simulator {
+            flex: 1;
+            min-width: 600px;
+            padding: 20px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            margin-right: 20px;
+        }
+        .image-container {
+            flex: 0 0 300px;
+            padding: 10px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #d9d9d9;
+            font-weight: bold;
+        }
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+        input[type="number"] {
+            width: 80px;
+            padding: 5px;
+            text-align: center;
+        }
+        .buttons {
+            margin-top: 20px;
+            display: flex;
+            gap: 10px;
+        }
+        button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.2s;
+        }
+        .calculate-button {
+            background-color: #3a7ca5;
+            color: white;
+        }
+        .calculate-button:hover {
+            background-color: #2c5d7c;
+        }
+        .reset-button {
+            background-color: #d9d9d9;
+        }
+        .reset-button:hover {
+            background-color: #c0c0c0;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #e6e6e6;
+            border-radius: 4px;
+            font-weight: bold;
+            text-align: center;
+        }
+        .note {
+            margin-top: 15px;
+            font-style: italic;
+            font-size: 12px;
+        }
+        img {
+            max-width: 100%;
+            height: auto;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        @media (max-width: 900px) {
+            .content {
+                flex-direction: column;
+            }
+            .simulator {
+                margin-right: 0;
+                margin-bottom: 20px;
+                min-width: 100%;
+            }
+            .image-container {
+                flex: 1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Simulateur de Moyenne - BTS CIEL Option B</h1>
+            <h2>Électronique et réseaux</h2>
+        </header>
+        
+        <div class="content">
+            <div class="simulator">
+                <h3>Entrez vos notes sur 20 pour chaque épreuve</h3>
+                
+                <table id="grades-table">
+                    <thead>
+                        <tr>
+                            <th>Code</th>
+                            <th>Épreuve</th>
+                            <th>Unité</th>
+                            <th>Coef.</th>
+                            <th>Note /20</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Les lignes du tableau seront ajoutées dynamiquement par JavaScript -->
+                    </tbody>
+                </table>
+                
+                <div class="buttons">
+                    <button class="calculate-button" onclick="calculateAverage()">Calculer la moyenne</button>
+                    <button class="reset-button" onclick="resetForm()">Réinitialiser</button>
+                </div>
+                
+                <div class="result" id="result">
+                    La moyenne s'affichera ici
+                </div>
+                
+                <div class="note">
+                    Note: Les épreuves facultatives ne sont comptées que si elles améliorent la moyenne (points > 10)
+                </div>
+            </div>
+            
+            <div class="image-container">
+                <img src="moyenne.PNG" alt="Image des moyennes" id="average-image">
+                <p>Image: moyenne.PNG</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Définition des épreuves
+        const epreuves = [
+            {code: "E1", nom: "Culture générale et expression", unite: "U1", coef: 2},
+            {code: "E2", nom: "Langue vivante étrangère 1: Anglais", unite: "U2", coef: 3},
+            {code: "E3", nom: "Mathématiques", unite: "U3", coef: 2},
+            {code: "E4", nom: "Étude et conception de produits électroniques", unite: "U4", coef: 4},
+            {code: "E5", nom: "Mise en œuvre de réseaux informatiques", unite: "U5", coef: 3},
+            {code: "E6", nom: "Réalisation et maintenance de produits électroniques", unite: "U6", coef: 7},
+            {code: "EF1", nom: "Langue vivante facultative", unite: "UF1", coef: 1, facultative: true},
+            {code: "EF2", nom: "Engagement étudiant", unite: "UF2", coef: 1, facultative: true}
+        ];
+
+        // Fonction pour initialiser le tableau
+        function initTable() {
+            const tableBody = document.querySelector("#grades-table tbody");
+            tableBody.innerHTML = "";
+
+            epreuves.forEach((epreuve, index) => {
+                const row = document.createElement("tr");
+                
+                // Créer les cellules
+                const codeCell = document.createElement("td");
+                codeCell.textContent = epreuve.code;
+                
+                const nomCell = document.createElement("td");
+                nomCell.textContent = epreuve.nom;
+                
+                const uniteCell = document.createElement("td");
+                uniteCell.textContent = epreuve.unite;
+                
+                const coefCell = document.createElement("td");
+                coefCell.textContent = epreuve.coef;
+                
+                const noteCell = document.createElement("td");
+                const noteInput = document.createElement("input");
+                noteInput.type = "number";
+                noteInput.min = "0";
+                noteInput.max = "20";
+                noteInput.step = "0.1";
+                noteInput.id = `note-${epreuve.code}`;
+                noteCell.appendChild(noteInput);
+                
+                // Ajouter les cellules à la ligne
+                row.appendChild(codeCell);
+                row.appendChild(nomCell);
+                row.appendChild(uniteCell);
+                row.appendChild(coefCell);
+                row.appendChild(noteCell);
+                
+                // Ajouter la ligne au tableau
+                tableBody.appendChild(row);
+            });
+        }
+
+        // Fonction pour calculer la moyenne
+        function calculateAverage() {
+            let totalPoints = 0;
+            let totalCoef = 0;
+            let pointsFacultatifs = 0;
+            
+            // Parcourir toutes les épreuves
+            for (const epreuve of epreuves) {
+                const noteInput = document.getElementById(`note-${epreuve.code}`);
+                
+                // Si aucune note n'est entrée, on continue
+                if (!noteInput.value) {
+                    continue;
+                }
+                
+                // Convertir en nombre
+                const note = parseFloat(noteInput.value);
+                
+                // Vérifier que la note est valide
+                if (note < 0 || note > 20 || isNaN(note)) {
+                    alert(`La note pour ${epreuve.code} doit être comprise entre 0 et 20`);
+                    return;
+                }
+                
+                // Traitement différent selon s'il s'agit d'une épreuve facultative ou non
+                if (epreuve.facultative) {
+                    if (note > 10) {
+                        pointsFacultatifs += (note - 10) * epreuve.coef;
+                    }
+                } else {
+                    totalPoints += note * epreuve.coef;
+                    totalCoef += epreuve.coef;
+                }
+            }
+            
+            // Calculer la moyenne
+            if (totalCoef === 0) {
+                alert("Veuillez entrer au moins une note pour les épreuves obligatoires");
+                return;
+            }
+            
+            const moyenneBase = totalPoints / totalCoef;
+            const moyenneFinale = moyenneBase + pointsFacultatifs / totalCoef;
+            
+            // Afficher le résultat
+            const resultElement = document.getElementById("result");
+            resultElement.innerHTML = `
+                <div>Moyenne: <strong>${moyenneFinale.toFixed(2)}/20</strong></div>
+                <div>Moyenne sans points facultatifs: ${moyenneBase.toFixed(2)}/20</div>
+                <div>Points facultatifs: ${pointsFacultatifs.toFixed(2)}</div>
+            `;
+            
+            // Ajouter un message selon la moyenne
+            if (moyenneFinale >= 10) {
+                setTimeout(() => {
+                    alert(`Félicitations! Vous avez une moyenne de ${moyenneFinale.toFixed(2)}/20`);
+                }, 100);
+            } else {
+                setTimeout(() => {
+                    alert(`Votre moyenne est de ${moyenneFinale.toFixed(2)}/20. Continuez vos efforts!`);
+                }, 100);
+            }
+        }
+
+        // Fonction pour réinitialiser le formulaire
+        function resetForm() {
+            epreuves.forEach(epreuve => {
+                const noteInput = document.getElementById(`note-${epreuve.code}`);
+                noteInput.value = "";
+            });
+            
+            // Réinitialiser le résultat
+            const resultElement = document.getElementById("result");
+            resultElement.textContent = "La moyenne s'affichera ici";
+        }
+
+        // Initialiser le tableau au chargement de la page
+        window.onload = initTable;
+    </script>
+</body>
+</html>
