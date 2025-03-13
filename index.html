@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Simulateur de Moyenne - BTS CIEL Option B</title>
     <style>
         * {
@@ -65,8 +65,16 @@
         }
         input[type="number"] {
             width: 80px;
-            padding: 5px;
+            padding: 8px;
             text-align: center;
+            font-size: 16px; /* Taille de police plus grande pour mobile */
+        }
+        
+        @media (max-width: 600px) {
+            input[type="number"] {
+                width: 100%;
+                margin: 5px 0;
+            }
         }
         .buttons {
             margin-top: 20px;
@@ -122,6 +130,63 @@
             .simulator, 
             .image-container {
                 padding: 15px;
+            }
+            header h1 {
+                font-size: 1.5rem;
+            }
+            header h2 {
+                font-size: 1.2rem;
+            }
+        }
+        
+        @media (max-width: 600px) {
+            table, thead, tbody, th, td, tr {
+                display: block;
+            }
+            
+            thead tr {
+                position: absolute;
+                top: -9999px;
+                left: -9999px;
+            }
+            
+            tr {
+                border: 1px solid #ccc;
+                margin-bottom: 10px;
+            }
+            
+            td {
+                border: none;
+                border-bottom: 1px solid #eee;
+                position: relative;
+                padding-left: 50%;
+                text-align: right;
+            }
+            
+            td:before {
+                position: absolute;
+                top: 10px;
+                left: 10px;
+                width: 45%;
+                padding-right: 10px;
+                white-space: nowrap;
+                text-align: left;
+                font-weight: bold;
+            }
+            
+            /* Étiquettes pour chaque cellule */
+            td:nth-of-type(1):before { content: "Code"; }
+            td:nth-of-type(2):before { content: "Épreuve"; }
+            td:nth-of-type(3):before { content: "Unité"; }
+            td:nth-of-type(4):before { content: "Coef."; }
+            td:nth-of-type(5):before { content: "Note /20"; }
+            
+            .buttons {
+                flex-direction: column;
+            }
+            
+            img {
+                max-width: 100%;
             }
         }
     </style>
